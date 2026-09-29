@@ -11,6 +11,7 @@ export default function Layout() {
   const links = [
     { to: '/', label: 'Dashboard', roles: ['admin', 'teacher', 'student'] },
     { to: '/students', label: 'Students', roles: ['admin', 'teacher'] },
+    { to: '/classes', label: 'Classes', roles: ['admin', 'teacher'] },
     { to: '/attendance', label: 'Attendance', roles: ['admin', 'teacher'] },
     { to: '/grades', label: 'Grades', roles: ['admin', 'teacher', 'student'] },
     { to: '/announcements', label: 'Announcements', roles: ['admin', 'teacher', 'student'] },

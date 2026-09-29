@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import Classes from './pages/Classes.jsx';
 import Layout from './Layout.jsx';
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -13,6 +14,7 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route element={<Layout />}>
+        <Route path="/classes" element={<Classes />} />
         <Route path="/" element={<Dashboard />} />
         <Route path="/students" element={<Students />} />
         <Route path="/attendance" element={<Attendance />} />

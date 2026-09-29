@@ -31,6 +31,8 @@ export const api = {
 
   getClasses: (token) => request('/classes', { token }),
   createClass: (token, payload) => request('/classes', { method: 'POST', body: payload, token }),
+  getSubjects: (token, classId) => request(`/classes/${classId}/subjects`, { token }),
+  createSubject: (token, classId, name) => request(`/classes/${classId}/subjects`, { method: 'POST', body: { name }, token }),
 
   markAttendance: (token, payload) => request('/attendance', { method: 'POST', body: payload, token }),
   getClassAttendance: (token, classId, date) => request(`/attendance/class/${classId}?date=${date}`, { token }),
