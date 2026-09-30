@@ -19,8 +19,18 @@ export default function Students() {
 
   useEffect(() => {
     loadStudents();
-    api.getClasses(auth.token).then(setClasses).catch(() => {});
+    api.getClasses(auth.token).then(setClasses).catch(() => { });
   }, []);
+  async function handleDeleteStudent(id, name) {
+    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    setError('');
+    try {
+      await api.deleteStudent(auth.token, id);
+      loadStudents();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   async function handleCreate(e) {
     e.preventDefault();
@@ -98,6 +108,7 @@ export default function Students() {
                 <th>Admission no.</th>
                 <th>Class</th>
                 <th>Guardian</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -107,7 +118,20 @@ export default function Students() {
                   <td className="admission-no">{s.admission_no}</td>
                   <td>{s.class_name || '—'}</td>
                   <td>{s.guardian_name || '—'}</td>
+                  <td>
+                    {auth.user.role === 'admin' && (
+                      <button
+                        type="button"
+                        className="danger"
+                        style={{ marginTop: 0, padding: '5px 10px', fontSize: 12 }}
+                        onClick={() => handleDeleteStudent(s.id, s.full_name)}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </td>
                 </tr>
+
               ))}
             </tbody>
           </table>

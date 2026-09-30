@@ -17,6 +17,17 @@ export default function Classes() {
 
     useEffect(loadClasses, []);
 
+    async function handleDeleteClass(classId, className) {
+        if (!window.confirm(`Delete "${className}"? This cannot be undone.`)) return;
+        setError('');
+        try {
+            await api.deleteClass(auth.token, classId);
+            loadClasses();
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
     async function loadSubjects(classId) {
         try {
             const subjects = await api.getSubjects(auth.token, classId);
@@ -89,7 +100,17 @@ export default function Classes() {
             ) : (
                 classes.map((c) => (
                     <div className="card" key={c.id}>
-                        <h3 style={{ marginBottom: 4 }}>{c.name}</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <h3 style={{ marginBottom: 4 }}>{c.name}</h3>
+                            <button
+                                type="button"
+                                className="danger"
+                                style={{ marginTop: 0, padding: '6px 12px', fontSize: 13 }}
+                                onClick={() => handleDeleteClass(c.id, c.name)}
+                            >
+                                Delete
+                            </button>
+                        </div>
                         <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 0, marginBottom: 14 }}>
                             {c.teacher_name ? `Teacher: ${c.teacher_name}` : 'No teacher assigned'}
                         </p>
