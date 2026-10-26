@@ -54,6 +54,7 @@ func main() {
 	// Classes & subjects
 	r.HandleFunc("/api/classes", middleware.Authenticate(handlers.GetClasses)).Methods("GET")
 	r.HandleFunc("/api/classes", middleware.Authorize(handlers.CreateClass, "admin")).Methods("POST")
+	r.HandleFunc("/api/classes/{id}", middleware.Authorize(handlers.DeleteClass, "admin")).Methods("DELETE")
 	r.HandleFunc("/api/classes/{id}/subjects", middleware.Authenticate(handlers.GetSubjects)).Methods("GET")
 	r.HandleFunc("/api/classes/{id}/subjects", middleware.Authorize(handlers.CreateSubject, "admin", "teacher")).Methods("POST")
 

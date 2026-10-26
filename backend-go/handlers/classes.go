@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"schoolms/db"
+
+	"github.com/gorilla/mux"
 )
 
 // GetClasses lists all classes. Any authenticated user.
@@ -109,4 +110,20 @@ func CreateSubject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusCreated, map[string]int{"id": id})
+}
+
+// DeleteClass removes a class. Admin only.
+func DeleteClass(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	result, err := db.DB.Exec("DELETE FROM classes WHERE id = $1", id)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "Server error deleting class")
+		return
+	}
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		writeError(w, http.StatusNotFound, "Class not found")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"message": "Class deleted"})
 }

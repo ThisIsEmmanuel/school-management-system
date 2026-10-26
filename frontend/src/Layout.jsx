@@ -1,12 +1,30 @@
+import { useState } from 'react';
 import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext.jsx';
 
 export default function Layout() {
   const { auth, logout } = useAuth();
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('sms_sidebar') === 'collapsed';
+    } catch {
+      return false;
+    }
+  });
 
   if (!auth) return <Navigate to="/login" replace />;
 
   const { user } = auth;
+
+  function toggleSidebar() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('sms_sidebar', next ? 'collapsed' : 'open');
+      } catch { }
+      return next;
+    });
+  }
 
   const links = [
     { to: '/', label: 'Dashboard', roles: ['admin', 'teacher', 'student'] },
@@ -20,11 +38,21 @@ export default function Layout() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">BA</div>
-          <div className="brand-name">Brightfield Academy</div>
-          <div className="brand-sub">Student portal</div>
+      <aside className={'sidebar' + (collapsed ? ' collapsed' : '')}>
+        <div className="sidebar-top">
+          <div className="brand">
+            <div className="brand-mark">BA</div>
+            <div className="brand-name">Brightfield Academy</div>
+            <div className="brand-sub">Student portal</div>
+          </div>
+          <button
+            type="button"
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? '»' : '«'}
+          </button>
         </div>
 
         <ul className="nav-list">
@@ -35,22 +63,23 @@ export default function Layout() {
                 <NavLink
                   to={l.to}
                   end={l.to === '/'}
+                  title={l.label}
                   className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
                 >
-                  {l.label}
+                  <span className="nav-icon">{l.label[0]}</span>
+                  <span className="nav-label">{l.label}</span>
                 </NavLink>
               </li>
             ))}
         </ul>
 
         <div className="sidebar-footer">
-          <div>{user.full_name}</div>
-          <span className="role-badge">{user.role}</span>
-          <div style={{ marginTop: 14 }}>
-            <button className="secondary" style={{ marginTop: 0, width: '100%' }} onClick={logout}>
-              Sign out
-            </button>
+          <div className="user-info">
+            {user.full_name} ({user.role})
           </div>
+          <button type="button" className="logout-btn" onClick={logout} title="Logout">
+            {collapsed ? '↩' : 'Logout'}
+          </button>
         </div>
       </aside>
 
