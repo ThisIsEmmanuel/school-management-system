@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"schoolms/db"
+
+	"github.com/gorilla/mux"
 )
 
 type Student struct {
@@ -18,6 +19,7 @@ type Student struct {
 	FullName      string  `json:"full_name"`
 	Email         string  `json:"email"`
 	ClassName     *string `json:"class_name,omitempty"`
+	ClassID       *int    `json:"class_id,omitempty"`
 	UserID        int     `json:"user_id,omitempty"`
 }
 
@@ -25,7 +27,7 @@ type Student struct {
 func GetStudents(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.DB.Query(`
 		SELECT s.id, s.admission_no, s.date_of_birth, s.photo_url,
-		       s.guardian_name, s.guardian_phone, u.full_name, u.email, c.name
+		       s.guardian_name, s.guardian_phone, u.full_name, u.email, c.name, s.class_id
 		FROM students s
 		JOIN users u ON s.user_id = u.id
 		LEFT JOIN classes c ON s.class_id = c.id
@@ -40,7 +42,7 @@ func GetStudents(w http.ResponseWriter, r *http.Request) {
 	students := []Student{}
 	for rows.Next() {
 		var s Student
-		rows.Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.GuardianName, &s.GuardianPhone, &s.FullName, &s.Email, &s.ClassName)
+		rows.Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.GuardianName, &s.GuardianPhone, &s.FullName, &s.Email, &s.ClassName, &s.ClassID)
 		students = append(students, s)
 	}
 	writeJSON(w, http.StatusOK, students)
@@ -52,12 +54,12 @@ func GetMyProfile(w http.ResponseWriter, r *http.Request) {
 
 	var s Student
 	err := db.DB.QueryRow(`
-		SELECT s.id, s.admission_no, s.date_of_birth, s.photo_url, u.full_name, u.email, c.name
+		SELECT s.id, s.admission_no, s.date_of_birth, s.photo_url, u.full_name, u.email, c.name, s.class_id
 		FROM students s
 		JOIN users u ON s.user_id = u.id
 		LEFT JOIN classes c ON s.class_id = c.id
 		WHERE s.user_id = $1
-	`, claims.UserID).Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.FullName, &s.Email, &s.ClassName)
+	`, claims.UserID).Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.FullName, &s.Email, &s.ClassName, &s.ClassID)
 
 	if err != nil {
 		writeError(w, http.StatusNotFound, "No student record linked to this account")
@@ -74,12 +76,12 @@ func GetStudent(w http.ResponseWriter, r *http.Request) {
 	var s Student
 	err := db.DB.QueryRow(`
 		SELECT s.id, s.admission_no, s.date_of_birth, s.photo_url,
-		       s.guardian_name, s.guardian_phone, s.user_id, u.full_name, u.email, c.name
+		       s.guardian_name, s.guardian_phone, s.user_id, u.full_name, u.email, c.name, s.class_id
 		FROM students s
 		JOIN users u ON s.user_id = u.id
 		LEFT JOIN classes c ON s.class_id = c.id
 		WHERE s.id = $1
-	`, id).Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.GuardianName, &s.GuardianPhone, &s.UserID, &s.FullName, &s.Email, &s.ClassName)
+	`, id).Scan(&s.ID, &s.AdmissionNo, &s.DateOfBirth, &s.PhotoURL, &s.GuardianName, &s.GuardianPhone, &s.UserID, &s.FullName, &s.Email, &s.ClassName, &s.ClassID)
 
 	if err != nil {
 		writeError(w, http.StatusNotFound, "Student not found")
