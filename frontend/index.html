@@ -1,15 +1,40 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brightfield Academy | Portal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brightfield Academy | Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+    rel="stylesheet" />
+  <script>
+    function showErr(msg) {
+      var pre = document.createElement('pre');
+      pre.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;margin:0;padding:16px;background:#fee;color:#900;font:13px monospace;white-space:pre-wrap';
+      pre.textContent = msg;
+      (document.body || document.documentElement).appendChild(pre);
+    }
+    window.addEventListener('error', function (e) {
+      if (e.target && e.target !== window) {
+        showErr('Failed to load: ' + (e.target.src || e.target.href));
+      } else {
+        showErr('Error: ' + e.message + '\n' + (e.filename || '') + ':' + (e.lineno || ''));
+      }
+    }, true);
+    window.addEventListener('unhandledrejection', function (e) {
+      showErr('Promise error: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+    });
+  </script>
+</head>
+
+<body>
+  <div id="root">
+    <p style="font:16px sans-serif;padding:24px">Loading…</p>
+  </div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

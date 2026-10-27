@@ -4,6 +4,7 @@ import { useAuth } from '../AuthContext.jsx';
 
 export default function Classes() {
     const { auth } = useAuth();
+    const isAdmin = auth.user.role === 'admin';
     const [classes, setClasses] = useState([]);
     const [subjectsByClass, setSubjectsByClass] = useState({});
     const [newClassName, setNewClassName] = useState('');
@@ -16,17 +17,6 @@ export default function Classes() {
     }
 
     useEffect(loadClasses, []);
-
-    async function handleDeleteClass(classId, className) {
-        if (!window.confirm(`Delete "${className}"? This cannot be undone.`)) return;
-        setError('');
-        try {
-            await api.deleteClass(auth.token, classId);
-            loadClasses();
-        } catch (err) {
-            setError(err.message);
-        }
-    }
 
     async function loadSubjects(classId) {
         try {
@@ -55,6 +45,18 @@ export default function Classes() {
         }
     }
 
+    async function handleDeleteClass(classId, className) {
+        if (!window.confirm(`Delete "${className}"? This cannot be undone.`)) return;
+        setError('');
+        setMessage('');
+        try {
+            await api.deleteClass(auth.token, classId);
+            loadClasses();
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
     async function handleAddSubject(classId) {
         const name = newSubject[classId];
         if (!name) return;
@@ -77,39 +79,46 @@ export default function Classes() {
                 </div>
             </div>
 
-            <div className="card">
-                <h3 style={{ marginBottom: 14 }}>Create a class</h3>
-                <form onSubmit={handleCreateClass}>
-                    <label>Class name</label>
-                    <input
-                        placeholder="e.g. SS2 Gold"
-                        value={newClassName}
-                        onChange={(e) => setNewClassName(e.target.value)}
-                        required
-                    />
-                    {error && <p className="error-text">{error}</p>}
-                    {message && <p style={{ color: 'var(--success)', fontSize: 13, marginTop: 10 }}>{message}</p>}
-                    <button type="submit">Create class</button>
-                </form>
-            </div>
+            {isAdmin && (
+                <div className="card">
+                    <h3 style={{ marginBottom: 14 }}>Create a class</h3>
+                    <form onSubmit={handleCreateClass}>
+                        <label>Class name</label>
+                        <input
+                            placeholder="e.g. SS2 Gold"
+                            value={newClassName}
+                            onChange={(e) => setNewClassName(e.target.value)}
+                            required
+                        />
+                        {message && <p style={{ color: 'var(--success)', fontSize: 13, marginTop: 10 }}>{message}</p>}
+                        <button type="submit">Create class</button>
+                    </form>
+                </div>
+            )}
+
+            {error && <p className="error-text">{error}</p>}
 
             {classes.length === 0 ? (
                 <div className="card">
-                    <p className="empty-state">No classes yet — create one above to get started.</p>
+                    <p className="empty-state">
+                        {isAdmin ? 'No classes yet. Create one above to get started.' : 'No classes have been created yet.'}
+                    </p>
                 </div>
             ) : (
                 classes.map((c) => (
                     <div className="card" key={c.id}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <h3 style={{ marginBottom: 4 }}>{c.name}</h3>
-                            <button
-                                type="button"
-                                className="danger"
-                                style={{ marginTop: 0, padding: '6px 12px', fontSize: 13 }}
-                                onClick={() => handleDeleteClass(c.id, c.name)}
-                            >
-                                Delete
-                            </button>
+                            {isAdmin && (
+                                <button
+                                    type="button"
+                                    className="danger"
+                                    style={{ marginTop: 0, padding: '6px 12px', fontSize: 13 }}
+                                    onClick={() => handleDeleteClass(c.id, c.name)}
+                                >
+                                    Delete
+                                </button>
+                            )}
                         </div>
                         <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 0, marginBottom: 14 }}>
                             {c.teacher_name ? `Teacher: ${c.teacher_name}` : 'No teacher assigned'}

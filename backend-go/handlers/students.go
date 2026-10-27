@@ -167,3 +167,4 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"message": "Student deleted"})
 }
+ 
