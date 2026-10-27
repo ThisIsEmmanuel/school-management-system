@@ -38,6 +38,19 @@ export default function Layout() {
     { to: '/register', label: 'Add user', roles: ['admin'] }
   ];
 
+  // Helper function to format the portal label based on user role
+  const getPortalLabel = (role) => {
+    switch (role) {
+      case 'admin':
+        return 'Admin Portal';
+      case 'teacher':
+        return 'Teacher Portal';
+      case 'student':
+      default:
+        return 'Student Portal';
+    }
+  };
+
   return (
     <div className="app-shell">
       <aside className={'sidebar' + (collapsed ? ' collapsed' : '')}>
@@ -45,7 +58,7 @@ export default function Layout() {
           <div className="brand">
             <div className="brand-mark">BA</div>
             <div className="brand-name">Brightfield Academy</div>
-            <div className="brand-sub">Student portal</div>
+            <div className="brand-sub">{getPortalLabel(user.role)}</div>
           </div>
           <button
             type="button"
