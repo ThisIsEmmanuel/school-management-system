@@ -30,7 +30,7 @@ export default function Login() {
     <div className="login-screen">
       <div className="login-card">
         <h1>Brightfield Academy</h1>
-        <p className="tagline">Sign in to the student portal</p>
+        <p className="tagline">Sign in to your portal</p>
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>

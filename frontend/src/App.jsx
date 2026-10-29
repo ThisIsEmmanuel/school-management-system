@@ -10,6 +10,7 @@ import MyAttendance from './pages/MyAttendance.jsx';
 import Grades from './pages/Grades.jsx';
 import Announcements from './pages/Announcements.jsx';
 import RegisterUser from './pages/RegisterUser.jsx';
+import ChangePassword from './pages/ChangePassword.jsx';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/grades" element={<Grades />} />
         <Route path="/announcements" element={<Announcements />} />
         <Route path="/register" element={<RegisterUser />} />
+        <Route path="/change-password" element={<ChangePassword />} />
       </Route>
     </Routes>
   );

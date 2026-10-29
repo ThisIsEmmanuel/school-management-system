@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
-	"schoolms/db"
-
 	"github.com/gorilla/mux"
+	"schoolms/db"
 )
 
 type Student struct {
@@ -121,10 +121,12 @@ func CreateStudent(w http.ResponseWriter, r *http.Request) {
 	var id int
 	err := db.DB.QueryRow(`
 		INSERT INTO students (user_id, class_id, admission_no, date_of_birth, guardian_name, guardian_phone, photo_url)
-		VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
+		VALUES ($1, $2, $3, NULLIF($4::text, '')::date, NULLIF($5::text, ''), NULLIF($6::text, ''), NULLIF($7::text, ''))
+		RETURNING id
 	`, req.UserID, req.ClassID, req.AdmissionNo, req.DateOfBirth, req.GuardianName, req.GuardianPhone, req.PhotoURL).Scan(&id)
 
 	if err != nil {
+		log.Println("CreateStudent error:", err)
 		writeError(w, http.StatusInternalServerError, "Server error creating student")
 		return
 	}
@@ -146,6 +148,7 @@ func UpdateStudent(w http.ResponseWriter, r *http.Request) {
 	`, req.ClassID, req.GuardianName, req.GuardianPhone, req.PhotoURL, id)
 
 	if err != nil {
+		log.Println("UpdateStudent error:", err)
 		writeError(w, http.StatusInternalServerError, "Server error updating student")
 		return
 	}
@@ -157,6 +160,7 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	result, err := db.DB.Exec("DELETE FROM students WHERE id = $1", id)
 	if err != nil {
+		log.Println("DeleteStudent error:", err)
 		writeError(w, http.StatusInternalServerError, "Server error deleting student")
 		return
 	}
@@ -167,4 +171,3 @@ func DeleteStudent(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"message": "Student deleted"})
 }
- 

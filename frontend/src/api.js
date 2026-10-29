@@ -21,6 +21,8 @@ async function request(path, { method = 'GET', body, token } = {}) {
 export const api = {
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password } }),
   register: (token, payload) => request('/auth/register', { method: 'POST', body: payload, token }),
+  changePassword: (token, current_password, new_password) =>
+    request('/auth/change-password', { method: 'POST', body: { current_password, new_password }, token }),
 
   getStudents: (token) => request('/students', { token }),
   getMyProfile: (token) => request('/students/me', { token }),

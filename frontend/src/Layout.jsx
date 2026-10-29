@@ -35,6 +35,7 @@ export default function Layout() {
     { to: '/my-attendance', label: 'My attendance', roles: ['student'] },
     { to: '/grades', label: 'Grades', roles: ['admin', 'teacher', 'student'] },
     { to: '/announcements', label: 'Announcements', roles: ['admin', 'teacher', 'student'] },
+    { to: '/change-password', label: 'Password', roles: ['admin', 'teacher', 'student'] },
     { to: '/register', label: 'Add user', roles: ['admin'] }
   ];
 

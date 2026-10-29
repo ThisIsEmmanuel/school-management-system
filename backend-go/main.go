@@ -33,7 +33,8 @@ func main() {
 	// Auth
 	r.HandleFunc("/api/auth/register", middleware.Authorize(handlers.Register, "admin")).Methods("POST")
 	r.HandleFunc("/api/auth/login", handlers.Login).Methods("POST")
-
+    r.HandleFunc("/api/auth/change-password", middleware.Authenticate(handlers.ChangePassword)).Methods("POST")
+	
 	// Students
 	r.HandleFunc("/api/students", middleware.Authorize(handlers.GetStudents, "admin", "teacher")).Methods("GET")
 	r.HandleFunc("/api/students/me", middleware.Authorize(handlers.GetMyProfile, "student")).Methods("GET")
